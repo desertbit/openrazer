@@ -1,0 +1,11 @@
+*~
+.*
+!/.gitignore
+
+.DS_Store
+._.DS_Store
+
+/bin
+/pkg
+/vendor/bin
+/vendor/pkg

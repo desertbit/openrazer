@@ -1,0 +1,11 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/desertbit/pakt",
+			"repository": "https://github.com/desertbit/pakt",
+			"revision": "2a48df8554aa2175c1d589ebdbc0db108a223e24",
+			"branch": "master"
+		}
+	]
+}
