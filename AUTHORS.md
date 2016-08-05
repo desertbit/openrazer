@@ -1,4 +1,4 @@
 # Authors
 
 - Roland Singer <roland.singer@desertbit.com>
-- Michael Hegel
+- Michael Hegel <michihegel@gmail.com>
