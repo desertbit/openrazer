@@ -19,3 +19,73 @@
  */
 
 package lib
+
+import (
+	"github.com/desertbit/pakt"
+	"github.com/desertbit/pakt/tcp"
+
+	"api"
+)
+
+var (
+	socket *pakt.Socket
+)
+
+// Initialize ... TODO
+func Initialize() error {
+	var err error
+
+	// Create a new client.
+	socket, err = tcp.NewClient("127.0.0.1:42193")
+	if err != nil {
+		return err
+	}
+
+	// Set a function which is triggered as soon as the socket closed.
+	// Optionally use the s.ClosedChan channel.
+	socket.OnClose(func(s *pakt.Socket) {
+		Log.Errorf("daemon connection lost.")
+	})
+
+	// Signalize the socket that initialization is done.
+	// Start accepting remote requests.
+	socket.Ready()
+
+	return nil
+}
+
+// GetDevices ...TODO
+func GetDevices() (api.Devices, error) {
+	// Call the server function in order to get an array of devices.
+	c, err := socket.Call("getDevices")
+	if err != nil {
+		return nil, err
+	}
+
+	// Decode the return value.
+	var devices api.Devices
+	err = c.Decode(&devices)
+	if err != nil {
+		return nil, err
+	}
+
+	return devices, nil
+}
+
+// GetDevice ... TODO
+func GetDevice(id string) (*api.Device, error) {
+	// Call the server function in order to get a specific device.
+	c, err := socket.Call("getDevice", id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Decode the return value.
+	var device api.Device
+	err = c.Decode(&device)
+	if err != nil {
+		return nil, err
+	}
+
+	return device, nil
+}
