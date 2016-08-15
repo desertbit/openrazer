@@ -31,7 +31,7 @@ var (
 	socket *pakt.Socket
 )
 
-// Initialize ... TODO
+// Initialize creates a new client socket.
 func Initialize() error {
 	var err error
 
@@ -44,7 +44,7 @@ func Initialize() error {
 	// Set a function which is triggered as soon as the socket closed.
 	// Optionally use the s.ClosedChan channel.
 	socket.OnClose(func(s *pakt.Socket) {
-		Log.Errorf("daemon connection lost.")
+		Log.Errorf("Daemon connection lost.")
 	})
 
 	// Signalize the socket that initialization is done.
@@ -54,7 +54,16 @@ func Initialize() error {
 	return nil
 }
 
-// GetDevices ...TODO
+// Close closes the socket connection.
+func Close() {
+	if socket == nil {
+		return
+	}
+
+	socket.Close()
+}
+
+// GetDevices returns a slice of current devices.
 func GetDevices() (api.Devices, error) {
 	// Call the server function in order to get an array of devices.
 	c, err := socket.Call("getDevices")
@@ -72,7 +81,7 @@ func GetDevices() (api.Devices, error) {
 	return devices, nil
 }
 
-// GetDevice ... TODO
+// GetDevice returns one device that's specified by an id.
 func GetDevice(id string) (*api.Device, error) {
 	// Call the server function in order to get a specific device.
 	c, err := socket.Call("getDevice", id)
