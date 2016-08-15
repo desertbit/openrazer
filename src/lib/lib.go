@@ -87,5 +87,5 @@ func GetDevice(id string) (*api.Device, error) {
 		return nil, err
 	}
 
-	return device, nil
+	return &device, nil
 }

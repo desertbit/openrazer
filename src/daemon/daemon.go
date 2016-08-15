@@ -21,19 +21,18 @@
 package main
 
 import (
-	"log"
-
 	"github.com/desertbit/pakt"
 	"github.com/desertbit/pakt/tcp"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 func main() {
 
 	err := startServer()
 	if err != nil {
-		Log.Errorf("Server failed to start with error: %s", err)
+		log.Fatalf("Daemon server failed: %v\n", err)
 	}
-
 }
 
 func startServer() error {
@@ -47,7 +46,7 @@ func startServer() error {
 	server.OnNewSocket(onNewSocket)
 
 	// Log.
-	Log.Println("Daemon server listening...")
+	log.Infoln("Daemon server listening...")
 
 	// Start the server.
 	server.Listen()
@@ -58,7 +57,7 @@ func startServer() error {
 func onNewSocket(s *pakt.Socket) {
 	// Log as soon as the socket closed.
 	s.OnClose(func(s *pakt.Socket) {
-		Log.Errorf("client socket closed with id: %s", s.ID())
+		log.Errorf("client socket closed with id: %s", s.ID())
 	})
 
 	// Register a remote callable function.
