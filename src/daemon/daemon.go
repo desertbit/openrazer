@@ -20,37 +20,42 @@
 
 package main
 
+import (
+	"log"
+
+	"github.com/desertbit/pakt"
+	"github.com/desertbit/pakt/tcp"
+)
+
 func main() {
 
-    err := startServer()
-    if err != nil {
-        Log.Errorf("Server failed to start with error: %s", err)
-    }
+	err := startServer()
+	if err != nil {
+		Log.Errorf("Server failed to start with error: %s", err)
+	}
 
 }
 
+func startServer() error {
+	// Create a new server.
+	server, err := tcp.NewServer("127.0.0.1:42193")
+	if err != nil {
+		return err
+	}
 
-func startServer() error{
-    // Create a new server.
-    server, err := tcp.NewServer("127.0.0.1:42193")
-    if err != nil {
-        return err
-    }
-
-    // Set the handler function.
+	// Set the handler function.
 	server.OnNewSocket(onNewSocket)
 
-	// Log. TODO
-	// Log.Println("Server listening...")
+	// Log.
+	Log.Println("Daemon server listening...")
 
 	// Start the server.
 	server.Listen()
 
-    return nil
+	return nil
 }
 
 func onNewSocket(s *pakt.Socket) {
-
 	// Log as soon as the socket closed.
 	s.OnClose(func(s *pakt.Socket) {
 		Log.Errorf("client socket closed with id: %s", s.ID())
@@ -58,11 +63,10 @@ func onNewSocket(s *pakt.Socket) {
 
 	// Register a remote callable function.
 	// Optionally use s.RegisterFuncs to register multiple functions at once.
-	s.RegisterFunc(s.RegisterFuncs(
-        "getDevices",   nil
-        "getDevice",    id
-        )
-    )
+	s.RegisterFuncs(pakt.Funcs{
+		"getDevices": getDevices,
+		"getDevice":  getDevice,
+	})
 
 	// Signalize the socket that initialization is done.
 	// Start accepting remote requests.
@@ -73,9 +77,10 @@ func onNewSocket(s *pakt.Socket) {
 }
 
 func getDevices(c *pakt.Context) (interface{}, error) {
-    return nil, nil
+
+	return nil, nil
 }
 
 func getDevice(c *pakt.Context) (interface{}, error) {
-    return nil, nil
+	return nil, nil
 }
