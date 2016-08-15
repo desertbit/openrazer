@@ -55,15 +55,12 @@ func Initialize() error {
 }
 
 // Close closes the socket connection.
-func Close() error {
+func Close() {
+	if socket == nil {
+		return
+	}
 
-    if socket == nil {
-        return nil
-    }
-
-    // Close the socket connection.
-    else socket.Close()
-    return nil
+	socket.Close()
 }
 
 // GetDevices returns a slice of current devices.
