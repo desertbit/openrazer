@@ -54,6 +54,18 @@ func Initialize() error {
 	return nil
 }
 
+// Close closes the socket connection.
+func Close() error {
+
+    if socket == nil {
+        return nil
+    }
+
+    // Close the socket connection.
+    else socket.Close()
+    return nil
+}
+
 // GetDevices returns a slice of current devices.
 func GetDevices() (api.Devices, error) {
 	// Call the server function in order to get an array of devices.
