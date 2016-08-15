@@ -28,7 +28,7 @@ import (
 )
 
 func main() {
-
+	// Start the pakt server.
 	err := startServer()
 	if err != nil {
 		log.Fatalf("Daemon server failed: %v\n", err)
@@ -60,6 +60,23 @@ func onNewSocket(s *pakt.Socket) {
 		log.Errorf("client socket closed with id: %s", s.ID())
 	})
 
+	// Set the call hook for logging purpose.
+	s.SetCallHook(func(s *pakt.Socket, funcID string, c *pakt.Context) {
+		log.WithFields(log.Fields{
+			"remoteAddress": s.RemoteAddr(),
+			"type":          funcID,
+			"dataSize":      len(c.Data),
+		}).Info("client request")
+	})
+
+	// Set the error hook for logging purpose.
+	s.SetErrorHook(func(s *pakt.Socket, funcID string, err error) {
+		log.WithFields(log.Fields{
+			"remoteAddress": s.RemoteAddr(),
+			"type":          funcID,
+		}).Warningf("client request failed: %v", err)
+	})
+
 	// Register a remote callable function.
 	// Optionally use s.RegisterFuncs to register multiple functions at once.
 	s.RegisterFuncs(pakt.Funcs{
@@ -76,7 +93,6 @@ func onNewSocket(s *pakt.Socket) {
 }
 
 func getDevices(c *pakt.Context) (interface{}, error) {
-
 	return nil, nil
 }
 

@@ -20,6 +20,26 @@
 
 package main
 
-func main() {
+import (
+	"fmt"
 
+	"lib"
+)
+
+func main() {
+	// TODO: Create a command line tool with arguments...
+
+	// Initialize the client connection to the daemon.
+	err := lib.Initialize()
+	checkErrFatal(err)
+
+	// Always close the daemon connection.
+	defer lib.Close()
+
+	devices, err := lib.GetDevices()
+	checkErrFatal(err)
+
+	for d := range devices {
+		fmt.Printf("%+v", d)
+	}
 }
