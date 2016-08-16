@@ -44,7 +44,7 @@ func Initialize() error {
 	// Set a function which is triggered as soon as the socket closed.
 	// Optionally use the s.ClosedChan channel.
 	socket.OnClose(func(s *pakt.Socket) {
-		Log.Errorf("Daemon connection lost.")
+		Log.Errorf("daemon connection lost.")
 	})
 
 	// Signalize the socket that initialization is done.
