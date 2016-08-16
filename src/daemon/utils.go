@@ -18,15 +18,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package api
+package main
 
-type Devices []*Device
+import (
+	"crypto/sha1"
+	"encoding/hex"
+	"os"
+)
 
-type Device struct {
-	ID              string
-	DeviceID        string
-	Name            string
-	DeviceType      string
-	Serial          string
-	FirmwareVersion string
+// exists returns whether the given file or directory exists or not
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+func stringToSHA1(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	return hex.EncodeToString(h.Sum(nil))
 }

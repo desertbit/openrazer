@@ -18,15 +18,52 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package api
+package main
 
-type Devices []*Device
+import (
+	"api"
+)
+
+//####################//
+//### Devices Type ###//
+//####################//
 
 type Device struct {
-	ID              string
-	DeviceID        string
-	Name            string
-	DeviceType      string
-	Serial          string
-	FirmwareVersion string
+	id              string
+	deviceID        string
+	name            string
+	deviceType      string
+	serial          string
+	firmwareVersion string
+}
+
+func NewDevice(deviceID string) *Device {
+	return &Device{
+		deviceID: deviceID,
+	}
+}
+
+func (d *Device) ID() string {
+	return d.id
+}
+
+func (d *Device) ToApiDevice() *api.Device {
+	return &api.Device{
+		ID:              d.id,
+		DeviceID:        d.deviceID,
+		Name:            d.name,
+		DeviceType:      d.deviceType,
+		Serial:          d.serial,
+		FirmwareVersion: d.firmwareVersion,
+	}
+}
+
+//###############//
+//### Private ###//
+//###############//
+
+func (d *Device) loadInfoFromDriver() error {
+	// TODO: load and validate
+
+	return nil
 }

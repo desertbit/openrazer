@@ -39,7 +39,7 @@ func main() {
 	devices, err := lib.GetDevices()
 	checkErrFatal(err)
 
-	for d := range devices {
+	for _, d := range devices {
 		fmt.Printf("%+v", d)
 	}
 }

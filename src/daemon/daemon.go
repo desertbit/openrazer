@@ -20,82 +20,30 @@
 
 package main
 
-import (
-	"github.com/desertbit/pakt"
-	"github.com/desertbit/pakt/tcp"
+import log "github.com/Sirupsen/logrus"
 
-	log "github.com/Sirupsen/logrus"
+//#################//
+//### Constants ###//
+//#################//
+
+const (
+	DriverPath = "/sys/bus/hid/drivers/hid-razer"
 )
 
+//############//
+//### Main ###//
+//############//
+
 func main() {
+	// Initialize the device list.
+	err := UpdateDevices()
+	if err != nil {
+		log.Fatalf("device initialization failed: %v", err)
+	}
+
 	// Start the pakt server.
-	err := startServer()
+	err = StartServer()
 	if err != nil {
-		log.Fatalf("Daemon server failed: %v\n", err)
+		log.Fatalf("daemon server failed: %v", err)
 	}
-}
-
-func startServer() error {
-	// Create a new server.
-	server, err := tcp.NewServer("127.0.0.1:42193")
-	if err != nil {
-		return err
-	}
-
-	// Set the handler function.
-	server.OnNewSocket(onNewSocket)
-
-	// Log.
-	log.Infoln("Daemon server listening...")
-
-	// Start the server.
-	server.Listen()
-
-	return nil
-}
-
-func onNewSocket(s *pakt.Socket) {
-	// Log as soon as the socket closed.
-	s.OnClose(func(s *pakt.Socket) {
-		log.Errorf("client socket closed with id: %s", s.ID())
-	})
-
-	// Set the call hook for logging purpose.
-	s.SetCallHook(func(s *pakt.Socket, funcID string, c *pakt.Context) {
-		log.WithFields(log.Fields{
-			"remoteAddress": s.RemoteAddr(),
-			"type":          funcID,
-			"dataSize":      len(c.Data),
-		}).Info("client request")
-	})
-
-	// Set the error hook for logging purpose.
-	s.SetErrorHook(func(s *pakt.Socket, funcID string, err error) {
-		log.WithFields(log.Fields{
-			"remoteAddress": s.RemoteAddr(),
-			"type":          funcID,
-		}).Warningf("client request failed: %v", err)
-	})
-
-	// Register a remote callable function.
-	// Optionally use s.RegisterFuncs to register multiple functions at once.
-	s.RegisterFuncs(pakt.Funcs{
-		"getDevices": getDevices,
-		"getDevice":  getDevice,
-	})
-
-	// Signalize the socket that initialization is done.
-	// Start accepting remote requests.
-	s.Ready()
-
-	// Log.
-	log.Printf("new client socket with id: %s", s.ID())
-}
-
-func getDevices(c *pakt.Context) (interface{}, error) {
-	return nil, nil
-}
-
-func getDevice(c *pakt.Context) (interface{}, error) {
-	return nil, nil
 }
