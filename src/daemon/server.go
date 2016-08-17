@@ -77,6 +77,7 @@ func onNewSocket(s *pakt.Socket) {
 		"getDevices":    getDevices,
 		"getDevice":     getDevice,
 		"getBrightness": getBrightness,
+		"getFnMode":     getFnMode,
 	})
 
 	// Signalize the socket that initialization is done.
@@ -131,4 +132,24 @@ func getBrightness(c *pakt.Context) (interface{}, error) {
 	}
 
 	return b, nil
+}
+
+func getFnMode(c *pakt.Context) (interface{}, error) {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return nil, err
+	}
+
+	m, err := d.GetFnMode()
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
 }
