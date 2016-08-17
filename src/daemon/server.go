@@ -78,6 +78,8 @@ func onNewSocket(s *pakt.Socket) {
 		"getDevice":     getDevice,
 		"getBrightness": getBrightness,
 		"getFnMode":     getFnMode,
+		"getKeyRows":    getKeyRows,
+		"getKeyColumns": getKeyColumns,
 	})
 
 	// Signalize the socket that initialization is done.
@@ -152,4 +154,44 @@ func getFnMode(c *pakt.Context) (interface{}, error) {
 	}
 
 	return m, nil
+}
+
+func getKeyRows(c *pakt.Context) (interface{}, error) {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := d.GetKeyRows()
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}
+
+func getKeyColumns(c *pakt.Context) (interface{}, error) {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return nil, err
+	}
+
+	co, err := d.GetKeyColumns()
+	if err != nil {
+		return nil, err
+	}
+
+	return co, nil
 }

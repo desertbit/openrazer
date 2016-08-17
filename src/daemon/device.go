@@ -38,16 +38,19 @@ type Device struct {
 	firmwareVersion string
 }
 
+// NewDevice returns a new Device with the given deviceID filled in.
 func NewDevice(deviceID string) *Device {
 	return &Device{
 		deviceID: deviceID,
 	}
 }
 
+// ID returns the ID of the given Device.
 func (d *Device) ID() string {
 	return d.id
 }
 
+// ToApiDevice transforms a device to a device struct, that's defined in api.go.
 func (d *Device) ToApiDevice() *api.Device {
 	return &api.Device{
 		ID:              d.id,
@@ -73,6 +76,36 @@ func (d *Device) GetBrightness() (int, error) {
 	b = int(float64(b) / 2.55)
 
 	return b, nil
+}
+
+// GetFnMode returns the current value of the fn_mode, it's either 0 or 1.
+func (d *Device) GetFnMode() (bool, error) {
+	fn, err := readIntFromFile(d.devicePath() + "fn_mode")
+	if err != nil {
+		return false, err
+	}
+
+	return (fn == 1), nil
+}
+
+// GetKeyRows returns the (internal) amount of rows of the keyboard.
+func (d *Device) GetKeyRows() (int, error) {
+	r, err := readIntFromFile(d.devicePath() + "get_key_rows")
+	if err != nil {
+		return 0, err
+	}
+
+	return r, nil
+}
+
+// GetKeyColumns returns the (internal) amount of columns of the keyboard.
+func (d *Device) GetKeyColumns() (int, error) {
+	c, err := readIntFromFile(d.devicePath() + "get_key_columns")
+	if err != nil {
+		return 0, err
+	}
+
+	return c, nil
 }
 
 //###############//
