@@ -26,7 +26,7 @@ c-sample: c-lib
 	mkdir -p $(BINDIR)/samples
 	gcc -I$(CURDIR)/bin/lib/c -Wall -o $(BINDIR)/samples/sample-c samples/c/main.c $(BINDIR)/lib/c/openrazer.so
 
-python-sample:  python-lib
+python-sample: c-lib python-lib
 	mkdir -p $(BINDIR)/samples
 	cp $(CURDIR)/samples/python/main.py $(BINDIR)/samples/sample-python.py
 	chmod +x $(BINDIR)/samples/sample-python.py

@@ -73,7 +73,7 @@ def get_device(id):
         lib.razer_get_device.argtypes = [ctypes.c_char_p]
         lib.razer_get_device.restype = ctypes.POINTER(ret_struct)
         ret = lib.razer_get_device(id.encode('utf-8'))
-        _raiseExceptionIf(ret == None)
+        _raiseExceptionIf(not ret)
         d = device(id=bytearray(ret.contents.id).decode('utf8'),
                     device_id=bytearray(ret.contents.device_id).decode('utf8'),
                     name=bytearray(ret.contents.name).decode('utf8'),
