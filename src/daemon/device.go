@@ -93,6 +93,9 @@ func (d *Device) SetBrightness(b int) error {
 
 	err := writeToFile(d.devicePath()+"brightness", v)
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return err
 	}
 
@@ -123,6 +126,9 @@ func (d *Device) SetFnMode(a bool) error {
 
 	err := writeToFile(d.devicePath()+"fn_mode", v)
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return err
 	}
 
