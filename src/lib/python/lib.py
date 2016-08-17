@@ -20,12 +20,29 @@
 #
 
 import ctypes
-from ctypes import *
+import collections
 
+####################
+### Named Tuples ###
+####################
+
+device = collections.namedtuple('Device', ['id', 'device_id', 'name', 'serial', 'firmware_version'])
+
+
+
+###############
+### Private ###
+###############
 
 def _raiseExceptionIf(condition):
     if condition:
         raise ValueError(get_last_error())
+
+
+
+##############
+### Public ###
+##############
 
 # Init connects to the daemon and initializes the library.
 # This method has to succeed before calling any other module methods.
@@ -46,10 +63,29 @@ def get_last_error():
     lib.razer_free(ptr)
     return bytearray(errStrB).decode('utf8')
 
-def razer_get_brightness(id):
-    class ret_struct(Structure):
-         _fields_ = [("r0", c_int),
-                     ("r1", c_int)]
+def get_device(id):
+        class ret_struct(ctypes.Structure):
+            _fields_ = [("id",                 ctypes.c_char_p),
+                        ("device_id",          ctypes.c_char_p),
+                        ("name",               ctypes.c_char_p),
+                        ("serial",             ctypes.c_char_p),
+                        ("firmware_version",   ctypes.c_char_p)]
+        lib.razer_get_device.argtypes = [ctypes.c_char_p]
+        lib.razer_get_device.restype = ctypes.POINTER(ret_struct)
+        ret = lib.razer_get_device(id.encode('utf-8'))
+        _raiseExceptionIf(ret == None)
+        d = device(id=bytearray(ret.contents.id).decode('utf8'),
+                    device_id=bytearray(ret.contents.device_id).decode('utf8'),
+                    name=bytearray(ret.contents.name).decode('utf8'),
+                    serial=bytearray(ret.contents.serial).decode('utf8'),
+                    firmware_version=bytearray(ret.contents.firmware_version).decode('utf8'))
+        lib.razer_device_free(ret)
+        return d
+
+def get_brightness(id):
+    class ret_struct(ctypes.Structure):
+        _fields_ = [("r0", ctypes.c_int),
+                    ("r1", ctypes.c_int)]
     lib.razer_get_brightness.argtypes = [ctypes.c_char_p]
     lib.razer_get_brightness.restype = ret_struct
     ret = lib.razer_get_brightness(id.encode('utf-8'))

@@ -28,6 +28,10 @@ import openrazer
 openrazer.init()
 atexit.register(openrazer.close)
 
+# Get Device.
+device = openrazer.get_device("950a78cfe4049c41742b5ab0e0b62a60dd584b1d")
+print(device)
+
 # Brightness.
-brightness = openrazer.razer_get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d")
+brightness = openrazer.get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d")
 print("brightness:", brightness)

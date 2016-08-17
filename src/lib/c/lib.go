@@ -20,7 +20,17 @@
 
 package main
 
-// #include <stdlib.h>
+/*
+#include <stdlib.h>
+
+struct razer_device {
+	char *id;
+	char *device_id;
+	char *name;
+	char *serial;
+	char *firmware_version;
+};
+*/
 import "C"
 
 import (
@@ -35,6 +45,16 @@ func main() {}
 //export razer_free
 func razer_free(ptr unsafe.Pointer) {
 	C.free(ptr)
+}
+
+//export razer_device_free
+func razer_device_free(d *C.struct_razer_device) {
+	C.free(unsafe.Pointer(d.id))
+	C.free(unsafe.Pointer(d.device_id))
+	C.free(unsafe.Pointer(d.name))
+	C.free(unsafe.Pointer(d.serial))
+	C.free(unsafe.Pointer(d.firmware_version))
+	C.free(unsafe.Pointer(d))
 }
 
 // It is the caller's responsibility to free the char array.
@@ -57,6 +77,26 @@ func razer_init() C.int {
 //export razer_close
 func razer_close() {
 	lib.Close()
+}
+
+// It is the caller's responsibility to free the device memory with razer_device_free.
+// Retruns nil on error.
+//export razer_get_device
+func razer_get_device(id *C.char) (device *C.struct_razer_device) {
+	d, err := lib.GetDevice(C.GoString(id))
+	if err != nil {
+		setLastErr(err)
+		return nil
+	}
+
+	device = (*C.struct_razer_device)(C.malloc(C.size_t(unsafe.Sizeof(C.struct_razer_device{}))))
+	device.id = C.CString(d.ID)
+	device.device_id = C.CString(d.DeviceID)
+	device.name = C.CString(d.Name)
+	device.serial = C.CString(d.Serial)
+	device.firmware_version = C.CString(d.FirmwareVersion)
+
+	return device
 }
 
 //export razer_get_brightness

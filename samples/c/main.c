@@ -42,6 +42,23 @@ int main(int argc, char const *argv[])
         return ret;
     }
 
+
+    // Get Device.
+    struct razer_device *device = razer_get_device("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
+    if (!device) {
+        print_last_error();
+        return ret;
+    }
+    printf("device:\n"
+            " id=%s\n"
+            " device_id=%s\n"
+            " name=%s\n"
+            " serial=%s\n"
+            " firmware_version=%s\n", device->id, device->device_id, device->name,
+            device->serial, device->firmware_version);
+    razer_device_free(device);
+
+
     // Brightness.
     struct razer_get_brightness_return b_ret = razer_get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
     if (!b_ret.r0) {
