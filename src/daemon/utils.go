@@ -23,7 +23,10 @@ package main
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"io/ioutil"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // exists returns whether the given file or directory exists or not
@@ -41,5 +44,34 @@ func exists(path string) (bool, error) {
 func stringToSHA1(s string) string {
 	h := sha1.New()
 	h.Write([]byte(s))
-	return hex.EncodeToString(h.Sum(nil))
+	return strings.TrimSpace(hex.EncodeToString(h.Sum(nil)))
+}
+
+func readFromFile(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(b)), nil
+}
+
+func readIntFromFile(path string) (int, error) {
+	s, err := readFromFile(path)
+	if err != nil {
+		return 0, err
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0, err
+	}
+
+	return i, nil
 }

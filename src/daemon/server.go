@@ -21,8 +21,6 @@
 package main
 
 import (
-	"fmt"
-
 	"api"
 
 	"github.com/desertbit/pakt"
@@ -76,8 +74,9 @@ func onNewSocket(s *pakt.Socket) {
 	// Register a remote callable function.
 	// Optionally use s.RegisterFuncs to register multiple functions at once.
 	s.RegisterFuncs(pakt.Funcs{
-		"getDevices": getDevices,
-		"getDevice":  getDevice,
+		"getDevices":    getDevices,
+		"getDevice":     getDevice,
+		"getBrightness": getBrightness,
 	})
 
 	// Signalize the socket that initialization is done.
@@ -106,14 +105,30 @@ func getDevice(c *pakt.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	if len(id) == 0 {
-		return nil, fmt.Errorf("empty ID")
-	}
-
-	d := GetDevice(id)
-	if d == nil {
-		return nil, fmt.Errorf("device not found with id: %v", id)
+	d, err := GetDevice(id)
+	if err != nil {
+		return nil, err
 	}
 
 	return d.ToApiDevice(), nil
+}
+
+func getBrightness(c *pakt.Context) (interface{}, error) {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return nil, err
+	}
+
+	b, err := d.GetBrightness()
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }

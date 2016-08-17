@@ -26,7 +26,6 @@ type Device struct {
 	ID              string
 	DeviceID        string
 	Name            string
-	DeviceType      string
 	Serial          string
 	FirmwareVersion string
 }

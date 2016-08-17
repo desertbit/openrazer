@@ -22,6 +22,8 @@ package main
 
 import (
 	"api"
+	"fmt"
+	"strings"
 )
 
 //####################//
@@ -32,7 +34,6 @@ type Device struct {
 	id              string
 	deviceID        string
 	name            string
-	deviceType      string
 	serial          string
 	firmwareVersion string
 }
@@ -52,18 +53,67 @@ func (d *Device) ToApiDevice() *api.Device {
 		ID:              d.id,
 		DeviceID:        d.deviceID,
 		Name:            d.name,
-		DeviceType:      d.deviceType,
 		Serial:          d.serial,
 		FirmwareVersion: d.firmwareVersion,
 	}
+}
+
+// GetBrightness returns the brightness faktor in percent (0%-100%).
+func (d *Device) GetBrightness() (int, error) {
+	b, err := readIntFromFile(d.devicePath() + "brightness")
+	if err != nil {
+		return 0, err
+	}
+
+	if b < 0 || b > 255 {
+		return 0, fmt.Errorf("invalid brightness value: %v", b)
+	}
+
+	// Transform to percent.
+	b = int(float64(b) / 2.55)
+
+	return b, nil
 }
 
 //###############//
 //### Private ###//
 //###############//
 
-func (d *Device) loadInfoFromDriver() error {
-	// TODO: load and validate
+func (d *Device) init() error {
+	var err error
+	devicePath := d.devicePath()
+
+	d.name, err = readFromFile(devicePath + "device_type")
+	if err != nil {
+		return err
+	}
+
+	d.serial, err = readFromFile(devicePath + "get_serial")
+	if err != nil {
+		return err
+	}
+
+	d.firmwareVersion, err = readFromFile(devicePath + "get_firmware_version")
+	if err != nil {
+		return err
+	}
+
+	// Extract the real device ID.
+	var deviceID string
+	pos := strings.LastIndex(d.deviceID, ":")
+	if pos >= 0 {
+		pos2 := strings.LastIndex(d.deviceID, ".")
+		if pos2 >= 0 {
+			deviceID = d.deviceID[pos+1 : pos2]
+		}
+	}
+
+	// Create a unique ID from the device ID and the device serial.
+	d.id = stringToSHA1(deviceID + d.serial)
 
 	return nil
+}
+
+func (d *Device) devicePath() string {
+	return DriverPath + "/" + d.deviceID + "/"
 }

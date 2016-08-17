@@ -40,6 +40,10 @@ func main() {
 	checkErrFatal(err)
 
 	for _, d := range devices {
-		fmt.Printf("%+v", d)
+		fmt.Printf("%+v\n", d)
+
+		brightness, err := lib.GetBrightness(d.ID)
+		checkErrFatal(err)
+		fmt.Println("brightness:", brightness)
 	}
 }

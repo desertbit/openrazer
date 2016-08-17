@@ -79,21 +79,18 @@ func UpdateDevices() error {
 	// Add new devices which aren't present already.
 	for _, deviceID := range deviceIDs {
 		d := NewDevice(deviceID)
-		err = d.loadInfoFromDriver()
+		err = d.init()
 		if err != nil {
-			log.Errorf("failed to load information from the driver: %v", err)
+			log.Errorf("failed to init device: %v", err)
 			continue
 		}
-
-		// Create a unique ID from the device type and the device serial.
-		id := stringToSHA1(d.deviceType + d.serial)
 
 		// Skip if device is already in the map.
-		if _, ok := devices[id]; ok {
+		if _, ok := devices[d.id]; ok {
 			continue
 		}
 
-		devices[id] = d
+		devices[d.id] = d
 	}
 
 	// Remove devices which aren't present anymore.
@@ -128,12 +125,20 @@ func GetDevices() Devices {
 }
 
 // GetDevice returns the device specified by the ID.
-// Returns nil if not found.
-func GetDevice(id string) *Device {
+func GetDevice(id string) (*Device, error) {
+	if len(id) == 0 {
+		return nil, fmt.Errorf("empty ID")
+	}
+
 	devicesMutex.Lock()
 	defer devicesMutex.Unlock()
 
-	return devices[id]
+	d, ok := devices[id]
+	if !ok {
+		return nil, fmt.Errorf("device not found with id: %v", id)
+	}
+
+	return d, nil
 }
 
 //###############//

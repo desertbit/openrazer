@@ -98,3 +98,20 @@ func GetDevice(id string) (*api.Device, error) {
 
 	return &device, nil
 }
+
+// GetBrightness obtains the brightness value in percent (0%-100%).
+func GetBrightness(id string) (int, error) {
+	c, err := socket.Call("getBrightness", id)
+	if err != nil {
+		return 0, err
+	}
+
+	// Decode the return value.
+	var b int
+	err = c.Decode(&b)
+	if err != nil {
+		return 0, err
+	}
+
+	return b, nil
+}
