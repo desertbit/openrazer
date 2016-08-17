@@ -114,11 +114,11 @@ func GetBrightness(id string) (int, error) {
 
 // SetBrightness sets the brightness to the given value in percent (0%-100%).
 func SetBrightness(id string, b int) error {
-	v := SetBrightnessValue{
+	v := api.SetBrightnessValue{
 		ID:         id,
 		Brightness: b,
 	}
-	err := socket.Call("setBrightness", v)
+	_, err := socket.Call("setBrightness", v)
 	if err != nil {
 		return err
 	}
@@ -143,9 +143,13 @@ func GetFnMode(id string) (bool, error) {
 	return fn, nil
 }
 
-// SetFnMode obtains the value of fn_mode.
+// SetFnMode set the value of fn_mode.
 func SetFnMode(id string, a bool) error {
-	err := socket.Call("getFnMode", id, a)
+	v := api.SetFnModeValue{
+		ID:     id,
+		FnMode: a,
+	}
+	_, err := socket.Call("getFnMode", v)
 	if err != nil {
 		return err
 	}
