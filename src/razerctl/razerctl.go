@@ -22,12 +22,18 @@ package main
 
 import (
 	"fmt"
+	"os"
 
-	"lib"
+	"github.com/urfave/cli"
 )
 
+const (
+	Version = "1.0.0"
+)
+
+/*
 func main() {
-	// TODO: Create a command line tool with arguments...
+	cli.NewApp().Run(os.Args)
 
 	// Initialize the client connection to the daemon.
 	err := lib.Init()
@@ -46,4 +52,38 @@ func main() {
 		checkErrFatal(err)
 		fmt.Println("brightness:", brightness)
 	}
+}*/
+
+func main() {
+	app := cli.NewApp()
+	app.Name = "razerctl"
+	app.Version = Version
+	app.Usage = "send query and control commands to the OpenRazer daemon"
+
+	app.Commands = []cli.Command{
+		{
+			Name:    "devices",
+			Aliases: []string{"l"},
+			Usage:   "list all attached razer devices",
+			Action:  getDevices,
+		},
+		{
+			Name:    "device",
+			Aliases: []string{"d"},
+			Usage:   "show detailed information about a device",
+			Action:  getDevice,
+		},
+	}
+
+	app.Run(os.Args)
+}
+
+func getDevices(c *cli.Context) error {
+	fmt.Println("added task: ", c.Args().First())
+	return nil
+}
+
+func getDevice(c *cli.Context) error {
+	fmt.Println("added task: ", c.Args().First())
+	return nil
 }
