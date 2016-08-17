@@ -142,7 +142,7 @@ func (d *Device) init() error {
 	}
 
 	// Create a unique ID from the device ID and the device serial.
-	d.id = stringToSHA1(deviceID + d.serial)
+	d.id = stringToCRC64(deviceID + d.serial)
 
 	return nil
 }
