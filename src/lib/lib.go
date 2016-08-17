@@ -31,8 +31,8 @@ var (
 	socket *pakt.Socket
 )
 
-// Initialize creates a new client socket.
-func Initialize() error {
+// Init creates a new client socket.
+func Init() error {
 	var err error
 
 	// Create a new client.
@@ -40,12 +40,6 @@ func Initialize() error {
 	if err != nil {
 		return err
 	}
-
-	// Set a function which is triggered as soon as the socket closed.
-	// Optionally use the s.ClosedChan channel.
-	socket.OnClose(func(s *pakt.Socket) {
-		Log.Errorf("daemon connection lost.")
-	})
 
 	// Signalize the socket that initialization is done.
 	// Start accepting remote requests.

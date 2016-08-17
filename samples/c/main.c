@@ -18,32 +18,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-package main
+#include <stdlib.h>
+#include <stdio.h>
+#include <openrazer.h>
 
-import (
-	"fmt"
 
-	"lib"
-)
+void print_last_error()
+{
+    char *err = razer_get_last_error();
+    printf("error: %s\n", err);
+    free(err);
+}
 
-func main() {
-	// TODO: Create a command line tool with arguments...
 
-	// Initialize the client connection to the daemon.
-	err := lib.Init()
-	checkErrFatal(err)
+int main(int argc, char const *argv[])
+{
+    int ret;
 
-	// Always close the daemon connection.
-	defer lib.Close()
+    ret = razer_init();
+    if (!ret) {
+        print_last_error();
+        return ret;
+    }
 
-	devices, err := lib.GetDevices()
-	checkErrFatal(err)
+    struct razer_get_brightness_return b_ret = razer_get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
+    if (!b_ret.r0) {
+        print_last_error();
+        return ret;
+    }
+    printf("brightness: %d\n", b_ret.r1);
 
-	for _, d := range devices {
-		fmt.Printf("%+v\n", d)
 
-		brightness, err := lib.GetBrightness(d.ID)
-		checkErrFatal(err)
-		fmt.Println("brightness:", brightness)
-	}
+    razer_close();
+    return 0;
 }

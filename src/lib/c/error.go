@@ -20,30 +20,32 @@
 
 package main
 
-import (
-	"fmt"
+import "sync"
 
-	"lib"
+var (
+	lastErr      error
+	lastErrMutex sync.Mutex
 )
 
-func main() {
-	// TODO: Create a command line tool with arguments...
+func setLastErr(err error) {
+	lastErrMutex.Lock()
+	defer lastErrMutex.Unlock()
 
-	// Initialize the client connection to the daemon.
-	err := lib.Init()
-	checkErrFatal(err)
+	lastErr = err
+}
 
-	// Always close the daemon connection.
-	defer lib.Close()
+func getLastErr() error {
+	lastErrMutex.Lock()
+	defer lastErrMutex.Unlock()
 
-	devices, err := lib.GetDevices()
-	checkErrFatal(err)
+	return lastErr
+}
 
-	for _, d := range devices {
-		fmt.Printf("%+v\n", d)
-
-		brightness, err := lib.GetBrightness(d.ID)
-		checkErrFatal(err)
-		fmt.Println("brightness:", brightness)
+func getLastErrString() string {
+	err := getLastErr()
+	if err == nil {
+		return ""
 	}
+
+	return err.Error()
 }

@@ -21,29 +21,42 @@
 package main
 
 import (
-	"fmt"
+	"C"
 
 	"lib"
 )
 
-func main() {
-	// TODO: Create a command line tool with arguments...
+func main() {}
 
-	// Initialize the client connection to the daemon.
+// It is the caller's responsibility to free the char array.
+//export razer_get_last_error
+func razer_get_last_error() *C.char {
+	return C.CString(getLastErrString())
+}
+
+//export razer_init
+func razer_init() C.int {
 	err := lib.Init()
-	checkErrFatal(err)
-
-	// Always close the daemon connection.
-	defer lib.Close()
-
-	devices, err := lib.GetDevices()
-	checkErrFatal(err)
-
-	for _, d := range devices {
-		fmt.Printf("%+v\n", d)
-
-		brightness, err := lib.GetBrightness(d.ID)
-		checkErrFatal(err)
-		fmt.Println("brightness:", brightness)
+	if err != nil {
+		setLastErr(err)
+		return 0
 	}
+
+	return 1
+}
+
+//export razer_close
+func razer_close() {
+	lib.Close()
+}
+
+//export razer_get_brightness
+func razer_get_brightness(id *C.char) (ret C.int, brightness C.int) {
+	b, err := lib.GetBrightness(C.GoString(id))
+	if err != nil {
+		setLastErr(err)
+		return 0, 0
+	}
+
+	return 1, C.int(b)
 }
