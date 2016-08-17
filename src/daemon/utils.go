@@ -42,11 +42,10 @@ func exists(path string) (bool, error) {
 }
 
 func stringToCRC64(s string) string {
-	crc64Table := crc64.MakeTable(0xC96C5795D7870F42)
 
-	h := strconv.FormatUint(crc64.Checksum([]byte(s), crc64Table), 16)
-
-	return h
+	t := crc64.MakeTable(crc64.ECMA)
+	h := crc64.Checksum([]byte(s), t)
+	return strconv.FormatUint(h, 16)
 }
 
 /*
