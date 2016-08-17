@@ -157,7 +157,7 @@ func SetFnMode(id string, a bool) error {
 		ID:     id,
 		FnMode: a,
 	}
-	_, err := socket.Call("getFnMode", v)
+	_, err := socket.Call("setFnMode", v)
 	if err != nil {
 		return transformErrIfNotSupported(err)
 	}
@@ -204,8 +204,8 @@ func GetKeyColumns(id string) (int, error) {
 //###############//
 
 func transformErrIfNotSupported(err error) error {
-	if err.Error() == api.ErrNotSupport.Error() {
-		return api.ErrNotSupport
+	if err.Error() == api.ErrNotSupported.Error() {
+		return api.ErrNotSupported
 	}
 
 	return err

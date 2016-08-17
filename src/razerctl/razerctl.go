@@ -25,6 +25,7 @@ import (
 	"os"
 	"strconv"
 
+	"api"
 	"lib"
 
 	"github.com/olekukonko/tablewriter"
@@ -174,7 +175,17 @@ func setBrightness(c *cli.Context) error {
 		return fmt.Errorf("missing brightness value: specify the brightness value in percent [0-100]")
 	}
 
-	err := lib.SetBrightness(id, b)
+	bi, err := strconv.Atoi(b)
+	if err != nil {
+		return err
+	}
+
+	err = lib.Init()
+	if err != nil {
+		return err
+	}
+
+	err = lib.SetBrightness(id, bi)
 	if err != nil {
 		return err
 	}
@@ -197,8 +208,16 @@ func setFnMode(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	if activeI != 0 && activeI != 1 {
+		return fmt.Errorf("invalid active fn mode value: 0=disabled 1=enabled")
+	}
 
-	err := lib.SetFnMode(id, (activeI == 1))
+	err = lib.Init()
+	if err != nil {
+		return err
+	}
+
+	err = lib.SetFnMode(id, (activeI == 1))
 	if err != nil {
 		return err
 	}
