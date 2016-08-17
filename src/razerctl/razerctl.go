@@ -57,6 +57,18 @@ func main() {
 			Usage:   "show detailed information about a device",
 			Action:  getDevice,
 		},
+		{
+			Name:    "set-brightness",
+			Aliases: []string{"sb"},
+			Usage:   "set the brightness in percent [0-100]",
+			Action:  setBrightness,
+		},
+		{
+			Name:    "set-fn-mode",
+			Aliases: []string{"sfn"},
+			Usage:   "enable or disable the fn mode",
+			Action:  setFnMode,
+		},
 	}
 
 	app.Run(os.Args)
@@ -119,13 +131,77 @@ func getDevice(c *cli.Context) error {
 
 	brightness, err := lib.GetBrightness(d.ID)
 	if err == nil {
-		table.Append([]string{"Brightness", strconv.Itoa(brightness) + "%"})
+		table.Append([]string{"BRIGHTNESS", strconv.Itoa(brightness) + "%"})
+	} else if err != nil && err != api.ErrNotSupported {
+		return err
+	}
+
+	fnModeEnabled, err := lib.GetFnMode(d.ID)
+	if err == nil {
+		table.Append([]string{"FN MODE ENABLED", strconv.FormatBool(fnModeEnabled)})
+	} else if err != nil && err != api.ErrNotSupported {
+		return err
+	}
+
+	keyRows, err := lib.GetKeyRows(d.ID)
+	if err == nil {
+		table.Append([]string{"KEY ROWS", strconv.Itoa(keyRows)})
+	} else if err != nil && err != api.ErrNotSupported {
+		return err
+	}
+
+	keyColumns, err := lib.GetKeyColumns(d.ID)
+	if err == nil {
+		table.Append([]string{"KEY COLUMNS", strconv.Itoa(keyColumns)})
 	} else if err != nil && err != api.ErrNotSupported {
 		return err
 	}
 
 	// Print the formatted output.
 	table.Render()
+
+	return nil
+}
+
+func setBrightness(c *cli.Context) error {
+	id := c.Args().First()
+	if len(id) == 0 {
+		return fmt.Errorf("missing ID: specify the device ID")
+	}
+
+	b := c.Args().Get(1)
+	if len(b) == 0 {
+		return fmt.Errorf("missing brightness value: specify the brightness value in percent [0-100]")
+	}
+
+	err := lib.SetBrightness(id, b)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setFnMode(c *cli.Context) error {
+	id := c.Args().First()
+	if len(id) == 0 {
+		return fmt.Errorf("missing ID: specify the device ID")
+	}
+
+	active := c.Args().Get(1)
+	if len(active) == 0 {
+		return fmt.Errorf("missing active value: specify the fn mode active value [0=disabled 1=enabled]")
+	}
+
+	activeI, err := strconv.Atoi(active)
+	if err != nil {
+		return err
+	}
+
+	err := lib.SetFnMode(id, (activeI == 1))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
