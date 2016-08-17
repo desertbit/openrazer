@@ -88,7 +88,7 @@ func (d *Device) GetFnMode() (bool, error) {
 	return (fn == 1), nil
 }
 
-// GetKeyRows returns the (internal) amount of rows of the keyboard.
+// GetKeyRows returns the (internal) amount of rows on the keyboard.
 func (d *Device) GetKeyRows() (int, error) {
 	r, err := readIntFromFile(d.devicePath() + "get_key_rows")
 	if err != nil {
@@ -98,14 +98,14 @@ func (d *Device) GetKeyRows() (int, error) {
 	return r, nil
 }
 
-// GetKeyColumns returns the (internal) amount of columns of the keyboard.
+// GetKeyColumns returns the (internal) amount of columns on the keyboard.
 func (d *Device) GetKeyColumns() (int, error) {
-	c, err := readIntFromFile(d.devicePath() + "get_key_columns")
+	co, err := readIntFromFile(d.devicePath() + "get_key_columns")
 	if err != nil {
 		return 0, err
 	}
 
-	return c, nil
+	return co, nil
 }
 
 //###############//

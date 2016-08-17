@@ -148,12 +148,12 @@ func getFnMode(c *pakt.Context) (interface{}, error) {
 		return nil, err
 	}
 
-	m, err := d.GetFnMode()
+	fn, err := d.GetFnMode()
 	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return fn, nil
 }
 
 func getKeyRows(c *pakt.Context) (interface{}, error) {

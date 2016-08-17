@@ -109,3 +109,54 @@ func GetBrightness(id string) (int, error) {
 
 	return b, nil
 }
+
+// GetFnMode obtains the value of fn_mode.
+func GetFnMode(id string) (bool, error) {
+	c, err := socket.Call("getFnMode", id)
+	if err != nil {
+		return 0, err
+	}
+
+	// Decode the return value.
+	var fn bool
+	err = c.Decode(&fn)
+	if err != nil {
+		return 0, err
+	}
+
+	return fn, nil
+}
+
+// GetKeyRows obtains the (internal) amount of rows on the keyboard.
+func GetKeyRows(id string) (int, error) {
+	c, err := socket.Call("getKeyRows", id)
+	if err != nil {
+		return 0, err
+	}
+
+	// Decode the return value.
+	var r int
+	err = c.Decode(&r)
+	if err != nil {
+		return 0, err
+	}
+
+	return r, nil
+}
+
+// GetKeyColumns obtains the (internal) amount of columns on the keyboard.
+func GetKeyColumns(id string) (int, error) {
+	c, err := socket.Call("getKeyColumns", id)
+	if err != nil {
+		return 0, err
+	}
+
+	// Decode the return value.
+	var co int
+	err = c.Decode(&co)
+	if err != nil {
+		return 0, err
+	}
+
+	return co, nil
+}
