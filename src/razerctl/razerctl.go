@@ -120,8 +120,8 @@ func getDevice(c *cli.Context) error {
 	brightness, err := lib.GetBrightness(d.ID)
 	if err == nil {
 		table.Append([]string{"Brightness", strconv.Itoa(brightness) + "%"})
-	} else if err != nil {
-		// TODO
+	} else if err != nil && err != api.ErrNotSupported {
+		return err
 	}
 
 	// Print the formatted output.

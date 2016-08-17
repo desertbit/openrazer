@@ -29,9 +29,17 @@ import (
 	"api"
 )
 
+//#################//
+//### Variables ###//
+//#################//
+
 var (
 	socket *pakt.Socket
 )
+
+//##############//
+//### Public ###//
+//##############//
 
 // Init creates a new client socket.
 func Init() error {
@@ -64,7 +72,7 @@ func GetDevices() (api.Devices, error) {
 	// Call the server function in order to get an array of devices.
 	c, err := socket.Call("getDevices")
 	if err != nil {
-		return nil, err
+		return nil, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -82,7 +90,7 @@ func GetDevice(id string) (*api.Device, error) {
 	// Call the server function in order to get a specific device.
 	c, err := socket.Call("getDevice", id)
 	if err != nil {
-		return nil, err
+		return nil, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -99,7 +107,7 @@ func GetDevice(id string) (*api.Device, error) {
 func GetBrightness(id string) (int, error) {
 	c, err := socket.Call("getBrightness", id)
 	if err != nil {
-		return 0, err
+		return 0, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -116,7 +124,7 @@ func GetBrightness(id string) (int, error) {
 func SetBrightness(id string, b int) error {
 	err := socket.Call("setBrightness", id, b)
 	if err != nil {
-		return err
+		return transformErrIfNotSupported(err)
 	}
 
 	return nil
@@ -126,7 +134,7 @@ func SetBrightness(id string, b int) error {
 func GetFnMode(id string) (bool, error) {
 	c, err := socket.Call("getFnMode", id)
 	if err != nil {
-		return false, err
+		return false, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -143,7 +151,7 @@ func GetFnMode(id string) (bool, error) {
 func SetFnMode(id string, a bool) error {
 	err := socket.Call("getFnMode", id, a)
 	if err != nil {
-		return err
+		return transformErrIfNotSupported(err)
 	}
 
 	return nil
@@ -153,7 +161,7 @@ func SetFnMode(id string, a bool) error {
 func GetKeyRows(id string) (int, error) {
 	c, err := socket.Call("getKeyRows", id)
 	if err != nil {
-		return 0, err
+		return 0, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -170,7 +178,7 @@ func GetKeyRows(id string) (int, error) {
 func GetKeyColumns(id string) (int, error) {
 	c, err := socket.Call("getKeyColumns", id)
 	if err != nil {
-		return 0, err
+		return 0, transformErrIfNotSupported(err)
 	}
 
 	// Decode the return value.
@@ -181,4 +189,16 @@ func GetKeyColumns(id string) (int, error) {
 	}
 
 	return co, nil
+}
+
+//###############//
+//### Private ###//
+//###############//
+
+func transformErrIfNotSupported(err error) error {
+	if err.Error() == api.ErrNotSupport.Error() {
+		return api.ErrNotSupport
+	}
+
+	return err
 }
