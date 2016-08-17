@@ -22,7 +22,6 @@ package main
 
 import (
 	"hash/crc64"
-	//	"crypto/sha1"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -42,19 +41,11 @@ func exists(path string) (bool, error) {
 }
 
 func stringToCRC64(s string) string {
-
 	t := crc64.MakeTable(crc64.ECMA)
 	h := crc64.Checksum([]byte(s), t)
 	return strconv.FormatUint(h, 16)
 }
 
-/*
-func stringToSHA1(s string) string {
-	h := sha1.New()
-	h.Write([]byte(s))
-	return strings.TrimSpace(hex.EncodeToString(h.Sum(nil)))
-}
-*/
 func readFromFile(path string) (string, error) {
 	f, err := os.Open(path)
 	if err != nil {

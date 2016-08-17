@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 
 
     // Get Device.
-    struct razer_device *device = razer_get_device("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
+    struct razer_device *device = razer_get_device("1cebb99f93ff96a3");
     if (!device) {
         print_last_error();
         return ret;
@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
 
 
     // Brightness.
-    struct razer_get_brightness_return b_ret = razer_get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
+    struct razer_get_brightness_return b_ret = razer_get_brightness("1cebb99f93ff96a3");
     if (!b_ret.r0) {
         print_last_error();
         return ret;
