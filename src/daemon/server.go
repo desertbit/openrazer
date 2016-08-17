@@ -80,6 +80,8 @@ func onNewSocket(s *pakt.Socket) {
 		"getFnMode":     getFnMode,
 		"getKeyRows":    getKeyRows,
 		"getKeyColumns": getKeyColumns,
+		"setBrightness": setBrightness,
+		"setFnMode":     setFnMode,
 	})
 
 	// Signalize the socket that initialization is done.
@@ -136,6 +138,26 @@ func getBrightness(c *pakt.Context) (interface{}, error) {
 	return b, nil
 }
 
+func setBrightness(c *pakt.Context) error {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return err
+	}
+
+	err = d.SetBrightness(b)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func getFnMode(c *pakt.Context) (interface{}, error) {
 	var id string
 	err := c.Decode(&id)
@@ -154,6 +176,26 @@ func getFnMode(c *pakt.Context) (interface{}, error) {
 	}
 
 	return fn, nil
+}
+
+func setFnMode(c *pakt.Context, a bool) error {
+	var id string
+	err := c.Decode(&id)
+	if err != nil {
+		return err
+	}
+
+	d, err := GetDevice(id)
+	if err != nil {
+		return err
+	}
+
+	err = d.SetFnMode(a)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getKeyRows(c *pakt.Context) (interface{}, error) {
