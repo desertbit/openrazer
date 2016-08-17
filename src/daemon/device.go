@@ -65,6 +65,9 @@ func (d *Device) ToApiDevice() *api.Device {
 func (d *Device) GetBrightness() (int, error) {
 	b, err := readIntFromFile(d.devicePath() + "brightness")
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return 0, err
 	}
 
@@ -82,6 +85,9 @@ func (d *Device) GetBrightness() (int, error) {
 func (d *Device) GetFnMode() (bool, error) {
 	fn, err := readIntFromFile(d.devicePath() + "fn_mode")
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return false, err
 	}
 
@@ -92,6 +98,9 @@ func (d *Device) GetFnMode() (bool, error) {
 func (d *Device) GetKeyRows() (int, error) {
 	r, err := readIntFromFile(d.devicePath() + "get_key_rows")
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return 0, err
 	}
 
@@ -102,6 +111,9 @@ func (d *Device) GetKeyRows() (int, error) {
 func (d *Device) GetKeyColumns() (int, error) {
 	co, err := readIntFromFile(d.devicePath() + "get_key_columns")
 	if err != nil {
+		if err == ErrNotExists {
+			err = api.ErrNotSupported
+		}
 		return 0, err
 	}
 

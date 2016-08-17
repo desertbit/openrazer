@@ -23,7 +23,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 
+	"lib"
+
+	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
 )
 
@@ -31,30 +35,10 @@ const (
 	Version = "1.0.0"
 )
 
-/*
 func main() {
-	cli.NewApp().Run(os.Args)
-
-	// Initialize the client connection to the daemon.
-	err := lib.Init()
-	checkErrFatal(err)
-
 	// Always close the daemon connection.
 	defer lib.Close()
 
-	devices, err := lib.GetDevices()
-	checkErrFatal(err)
-
-	for _, d := range devices {
-		fmt.Printf("%+v\n", d)
-
-		brightness, err := lib.GetBrightness(d.ID)
-		checkErrFatal(err)
-		fmt.Println("brightness:", brightness)
-	}
-}*/
-
-func main() {
 	app := cli.NewApp()
 	app.Name = "razerctl"
 	app.Version = Version
@@ -79,11 +63,69 @@ func main() {
 }
 
 func getDevices(c *cli.Context) error {
-	fmt.Println("added task: ", c.Args().First())
+	err := lib.Init()
+	if err != nil {
+		return err
+	}
+
+	devices, err := lib.GetDevices()
+	if err != nil {
+		return err
+	}
+
+	// Format the output.
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "NAME", "DEVICE ID"})
+
+	for _, d := range devices {
+		table.Append([]string{d.ID, d.Name, d.DeviceID})
+	}
+
+	// Print the formatted output.
+	table.Render()
+
 	return nil
 }
 
 func getDevice(c *cli.Context) error {
-	fmt.Println("added task: ", c.Args().First())
+	id := c.Args().First()
+	if len(id) == 0 {
+		return fmt.Errorf("missing ID: specify the device ID")
+	}
+
+	err := lib.Init()
+	if err != nil {
+		return err
+	}
+
+	d, err := lib.GetDevice(id)
+	if err != nil {
+		return err
+	}
+
+	// Format the output.
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetRowLine(true)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+	table.SetCenterSeparator("+")
+	table.SetColumnSeparator("|")
+	table.SetRowSeparator("-")
+
+	table.Append([]string{"NAME", d.Name})
+	table.Append([]string{"ID", d.ID})
+	table.Append([]string{"DEVICE ID", d.DeviceID})
+	table.Append([]string{"FIRMWARE VERSION", d.FirmwareVersion})
+	table.Append([]string{"SERIAL", d.Serial})
+
+	brightness, err := lib.GetBrightness(d.ID)
+	if err == nil {
+		table.Append([]string{"Brightness", strconv.Itoa(brightness) + "%"})
+	} else if err != nil {
+		// TODO
+	}
+
+	// Print the formatted output.
+	table.Render()
+
 	return nil
 }

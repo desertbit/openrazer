@@ -20,6 +20,18 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/mattn/go-runewidth",
+			"repository": "https://github.com/mattn/go-runewidth",
+			"revision": "d6bea18f789704b5f83375793155289da36a3c7f",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/olekukonko/tablewriter",
+			"repository": "https://github.com/olekukonko/tablewriter",
+			"revision": "daf2955e742cf123959884fdff4685aa79b63135",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/urfave/cli",
 			"repository": "https://github.com/urfave/cli",
 			"revision": "168c95418e66e019fe17b8f4f5c45aa62ff80e23",

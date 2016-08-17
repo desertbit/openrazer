@@ -21,12 +21,25 @@
 package main
 
 import (
+	"errors"
 	"hash/crc64"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
 )
+
+//#################//
+//### Variables ###//
+//#################//
+
+var (
+	ErrNotExists = errors.New("not exists")
+)
+
+//#################//
+//### Functions ###//
+//#################//
 
 // exists returns whether the given file or directory exists or not
 func exists(path string) (bool, error) {
@@ -47,6 +60,13 @@ func stringToCRC64(s string) string {
 }
 
 func readFromFile(path string) (string, error) {
+	e, err := exists(path)
+	if err != nil {
+		return "", err
+	} else if !e {
+		return "", ErrNotExists
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -76,6 +96,13 @@ func readIntFromFile(path string) (int, error) {
 }
 
 func writeBytesToFile(path string, data []byte) error {
+	e, err := exists(path)
+	if err != nil {
+		return err
+	} else if !e {
+		return ErrNotExists
+	}
+
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		return err

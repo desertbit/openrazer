@@ -21,6 +21,8 @@
 package lib
 
 import (
+	"fmt"
+
 	"github.com/desertbit/pakt"
 	"github.com/desertbit/pakt/tcp"
 
@@ -38,7 +40,7 @@ func Init() error {
 	// Create a new client.
 	socket, err = tcp.NewClient("127.0.0.1:42193")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to connect to daemon: %v", err)
 	}
 
 	// Signalize the socket that initialization is done.

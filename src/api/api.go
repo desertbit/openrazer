@@ -20,6 +20,20 @@
 
 package api
 
+import "errors"
+
+//#################//
+//### Variables ###//
+//#################//
+
+var (
+	ErrNotSupported = errors.New("not supported")
+)
+
+//#############//
+//### Types ###//
+//#############//
+
 type Devices []*Device
 
 type Device struct {
