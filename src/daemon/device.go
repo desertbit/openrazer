@@ -23,6 +23,7 @@ package main
 import (
 	"api"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -81,6 +82,23 @@ func (d *Device) GetBrightness() (int, error) {
 	return b, nil
 }
 
+// SetBrightness writes the brightness faktor in percent (0%-100%).
+func (d *Device) SetBrightness(b int) error {
+	if b < 0 || b > 100 {
+		return fmt.Errorf("invalid brightness value: %v", b)
+	}
+
+	// Transform from percent and convert to string.
+	v := strconv.Itoa(int(float64(b) * 2.55))
+
+	err := writeToFile(d.devicePath()+"brightness", v)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetFnMode returns the current value of the fn_mode, it's either 0 or 1.
 func (d *Device) GetFnMode() (bool, error) {
 	fn, err := readIntFromFile(d.devicePath() + "fn_mode")
@@ -92,6 +110,23 @@ func (d *Device) GetFnMode() (bool, error) {
 	}
 
 	return (fn == 1), nil
+}
+
+// SetFnMode writes the  faktor in percent (0%-100%).
+func (d *Device) SetFnMode(a bool) error {
+	i := 0
+	if a {
+		i = 1
+	}
+
+	v := strconv.Itoa(i)
+
+	err := writeToFile(d.devicePath()+"fn_mode", v)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetKeyRows returns the (internal) amount of rows on the keyboard.

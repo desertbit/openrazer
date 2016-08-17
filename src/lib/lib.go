@@ -112,6 +112,16 @@ func GetBrightness(id string) (int, error) {
 	return b, nil
 }
 
+// SetBrightness sets the brightness to the given value in percent (0%-100%).
+func SetBrightness(id string, b int) error {
+	err := socket.Call("setBrightness", id, b)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetFnMode obtains the value of fn_mode.
 func GetFnMode(id string) (bool, error) {
 	c, err := socket.Call("getFnMode", id)
@@ -127,6 +137,16 @@ func GetFnMode(id string) (bool, error) {
 	}
 
 	return fn, nil
+}
+
+// SetFnMode obtains the value of fn_mode.
+func SetFnMode(id string, a bool) error {
+	err := socket.Call("getFnMode", id, a)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // GetKeyRows obtains the (internal) amount of rows on the keyboard.
