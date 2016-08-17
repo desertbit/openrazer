@@ -138,24 +138,24 @@ func getBrightness(c *pakt.Context) (interface{}, error) {
 	return b, nil
 }
 
-func setBrightness(c *pakt.Context) error {
-	var id string
-	err := c.Decode(&id)
+func setBrightness(c *pakt.Context) (interface{}, error) {
+	var v api.SetBrightnessValue
+	err := c.Decode(&v)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	d, err := GetDevice(id)
+	d, err := GetDevice(v.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = d.SetBrightness(b)
+	err = d.SetBrightness(v.Brightness)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
 func getFnMode(c *pakt.Context) (interface{}, error) {
@@ -178,24 +178,24 @@ func getFnMode(c *pakt.Context) (interface{}, error) {
 	return fn, nil
 }
 
-func setFnMode(c *pakt.Context, a bool) error {
-	var id string
-	err := c.Decode(&id)
+func setFnMode(c *pakt.Context) (interface{}, error) {
+	var v api.SetFnModeValue
+	err := c.Decode(&v)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	d, err := GetDevice(id)
+	d, err := GetDevice(v.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = d.SetFnMode(a)
+	err = d.SetFnMode(v.FnMode)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
 func getKeyRows(c *pakt.Context) (interface{}, error) {
