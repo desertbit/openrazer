@@ -43,3 +43,13 @@ type Device struct {
 	Serial          string
 	FirmwareVersion string
 }
+
+type SetBrightnessValue struct {
+	ID         string
+	Brightness int
+}
+
+type SetFnModeValue struct {
+	ID     string
+	FnMode bool
+}

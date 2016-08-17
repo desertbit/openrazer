@@ -122,7 +122,11 @@ func GetBrightness(id string) (int, error) {
 
 // SetBrightness sets the brightness to the given value in percent (0%-100%).
 func SetBrightness(id string, b int) error {
-	err := socket.Call("setBrightness", id, b)
+	v := SetBrightnessValue{
+		ID:         id,
+		Brightness: b,
+	}
+	err := socket.Call("setBrightness", v)
 	if err != nil {
 		return transformErrIfNotSupported(err)
 	}
