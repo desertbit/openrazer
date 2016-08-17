@@ -35,12 +35,14 @@ int main(int argc, char const *argv[])
 {
     int ret;
 
+    // Initialize the openrazer module.
     ret = razer_init();
     if (!ret) {
         print_last_error();
         return ret;
     }
 
+    // Brightness.
     struct razer_get_brightness_return b_ret = razer_get_brightness("950a78cfe4049c41742b5ab0e0b62a60dd584b1d");
     if (!b_ret.r0) {
         print_last_error();

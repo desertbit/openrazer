@@ -20,13 +20,22 @@
 
 package main
 
+// #include <stdlib.h>
+import "C"
+
 import (
-	"C"
+	"unsafe"
 
 	"lib"
 )
 
 func main() {}
+
+// Deallocates the memory previously allocated by a call to calloc, malloc, or realloc.
+//export razer_free
+func razer_free(ptr unsafe.Pointer) {
+	C.free(ptr)
+}
 
 // It is the caller's responsibility to free the char array.
 //export razer_get_last_error

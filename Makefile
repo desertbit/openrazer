@@ -5,9 +5,11 @@ GOPATH=$(CURDIR):$(CURDIR)/vendor
 all: daemon razerctl c-lib python-lib
 
 daemon:
+	mkdir -p $(BINDIR)
 	go install daemon
 
 razerctl:
+	mkdir -p $(BINDIR)
 	go install razerctl
 
 c-lib:
@@ -18,16 +20,19 @@ python-lib:
 	mkdir -p $(BINDIR)/lib/python
 	cp $(CURDIR)/src/lib/python/lib.py $(BINDIR)/lib/python/openrazer.py
 
-samples: c-sample
+samples: c-sample python-sample
 
 c-sample: c-lib
 	mkdir -p $(BINDIR)/samples
 	gcc -I$(CURDIR)/bin/lib/c -Wall -o $(BINDIR)/samples/sample-c samples/c/main.c $(BINDIR)/lib/c/openrazer.so
 
+python-sample: c-lib python-lib
+	mkdir -p $(BINDIR)/samples
+	cp $(CURDIR)/samples/python/main.py $(BINDIR)/samples/sample-python.py
+	chmod +x $(BINDIR)/samples/sample-python.py
+
+run-python-sample:
+	 PYTHONPATH="$(BINDIR)/lib/python" LD_LIBRARY_PATH="$(BINDIR)/lib/c/" $(BINDIR)/samples/sample-python.py
+
 clean:
-	@rm $(BINDIR)/daemon
-	@rm $(BINDIR)/razerctl
-	@rm $(BINDIR)/openrazer.so
-	@rm $(BINDIR)/openrazer.h
-	@rm -r $(BINDIR)/lib
-	@rm -r $(BINDIR)/samples
+	@rm -r $(BINDIR)

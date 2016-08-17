@@ -20,19 +20,38 @@
 #
 
 import ctypes
+from ctypes import *
 
 
+def _raiseExceptionIf(condition):
+    if condition:
+        raise ValueError(get_last_error())
+
+# Init connects to the daemon and initializes the library.
+# This method has to succeed before calling any other module methods.
 def init():
-    global _lib
-    _lib = ctypes.CDLL("../c/openrazer.so")
-    razer_init            = _lib.razer_init
-    razer_init.restype    = ctypes.c_bool
-    return razer_init()
+    global lib
+    lib = ctypes.CDLL("openrazer.so")
+    lib.razer_init.restype = ctypes.c_int
+    ret = lib.razer_init()
+    _raiseExceptionIf(ret != 1)
 
 def close():
-    _lib.close()
+    lib.close()
 
 def get_last_error():
-    razer_get_last_error            = _lib.razer_get_last_error
-    razer_get_last_error.restype    = ctypes.c_char_p
-    return razer_get_last_error()
+    lib.razer_get_last_error.restype = ctypes.c_void_p
+    ptr = lib.razer_get_last_error()
+    errStrB = ctypes.cast(ptr, ctypes.c_char_p).value
+    lib.razer_free(ptr)
+    return bytearray(errStrB).decode('utf8')
+
+def razer_get_brightness(id):
+    class ret_struct(Structure):
+         _fields_ = [("r0", c_int),
+                     ("r1", c_int)]
+    lib.razer_get_brightness.argtypes = [ctypes.c_char_p]
+    lib.razer_get_brightness.restype = ret_struct
+    ret = lib.razer_get_brightness(id.encode('utf-8'))
+    _raiseExceptionIf(ret.r0 != 1)
+    return ret.r1
