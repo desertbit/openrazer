@@ -21,8 +21,8 @@
 package main
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
+	"hash/crc64"
+	//	"crypto/sha1"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -41,12 +41,21 @@ func exists(path string) (bool, error) {
 	return false, err
 }
 
+func stringToCRC64(s string) string {
+	crc64Table := crc64.MakeTable(0xC96C5795D7870F42)
+
+	h := strconv.FormatUint(crc64.Checksum([]byte(s), crc64Table), 16)
+
+	return h
+}
+
+/*
 func stringToSHA1(s string) string {
 	h := sha1.New()
 	h.Write([]byte(s))
 	return strings.TrimSpace(hex.EncodeToString(h.Sum(nil)))
 }
-
+*/
 func readFromFile(path string) (string, error) {
 	f, err := os.Open(path)
 	if err != nil {
