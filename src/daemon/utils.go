@@ -75,3 +75,22 @@ func readIntFromFile(path string) (int, error) {
 
 	return i, nil
 }
+
+func writeBytesToFile(path string, data []byte) error {
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func writeToFile(path, data string) error {
+	return writeBytesToFile(path, []byte(data))
+}
