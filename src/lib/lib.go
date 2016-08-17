@@ -114,14 +114,14 @@ func GetBrightness(id string) (int, error) {
 func GetFnMode(id string) (bool, error) {
 	c, err := socket.Call("getFnMode", id)
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	// Decode the return value.
 	var fn bool
 	err = c.Decode(&fn)
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	return fn, nil
